@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Little Date Plan</title>
+  <style>
+    :root {
+      --ink: #5f233b;
+      --muted: #9c5d72;
+      --pink: #f65b8b;
+      --deep-pink: #d83f70;
+      --rose: #ffe3ed;
+      --cream: #fffafc;
+      --white: #ffffff;
+      --shadow: 0 24px 70px rgba(192, 65, 110, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      text-transform: uppercase;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.92) 0 5%, transparent 6%),
+        radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.7) 0 7%, transparent 8%),
+        linear-gradient(135deg, #fff5f9 0%, #ffdce9 50%, #fff8f8 100%);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body::before,
+    body::after {
+      position: fixed;
+      z-index: -1;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: rgba(255, 146, 182, 0.18);
+      content: "";
+      filter: blur(4px);
+    }
+
+    body::before {
+      top: -150px;
+      left: -100px;
+    }
+
+    body::after {
+      right: -140px;
+      bottom: -180px;
+    }
+
+    .floating-hearts {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -30px;
+      color: rgba(236, 77, 128, 0.43);
+      font-family: Arial, sans-serif;
+      font-size: var(--size);
+      animation: floatUp var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 0.65; }
+      100% { transform: translateY(-110vh) rotate(22deg) scale(1.15); opacity: 0; }
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 48px 20px;
+    }
+
+    .planner {
+      display: grid;
+      width: min(1050px, 100%);
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.64);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .intro {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 650px;
+      padding: clamp(36px, 6vw, 78px);
+      overflow: hidden;
+      background: linear-gradient(155deg, rgba(246, 91, 139, 0.96), rgba(214, 57, 108, 0.92));
+      color: var(--white);
+    }
+
+    .intro::after {
+      position: absolute;
+      right: -80px;
+      bottom: -90px;
+      width: 320px;
+      height: 320px;
+      border: 38px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin: 0 0 22px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.14);
+      font-family: Arial, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 430px;
+      margin: 0;
+      font-size: clamp(3rem, 6vw, 5.2rem);
+      font-weight: 400;
+      letter-spacing: -0.07em;
+      line-height: 0.92;
+    }
+
+    h1 .remember {
+      display: block;
+      font-size: 0.78em;
+      letter-spacing: -0.08em;
+      white-space: nowrap;
+    }
+
+    .intro-copy {
+      max-width: 350px;
+      margin: 28px 0 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-family: Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .love-note {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-top: 52px;
+      font-size: 1.1rem;
+    }
+
+    .mini-heart {
+      display: grid;
+      width: 43px;
+      height: 43px;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      font-family: Arial, sans-serif;
+      font-size: 1.35rem;
+      animation: heartbeat 1.7s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 35%, 65%, 100% { transform: scale(1); }
+      50% { transform: scale(1.16); }
+    }
+
+    .form-side {
+      padding: clamp(32px, 5vw, 65px);
+    }
+
+    .form-heading {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      letter-spacing: -0.05em;
+    }
+
+    .form-subtitle {
+      margin: 0 0 34px;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    .fields {
+      display: grid;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #f3c1d2;
+      border-radius: 14px;
+      outline: none;
+      padding: 16px 17px;
+      background: rgba(255, 250, 252, 0.88);
+      color: var(--ink);
+      font: 1rem Arial, sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 4px rgba(246, 91, 139, 0.12);
+      transform: translateY(-1px);
+    }
+
+    input[readonly] {
+      cursor: not-allowed;
+      opacity: 0.9;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid #f3c1d2;
+      border-radius: 14px;
+      outline: none;
+      padding: 16px 17px;
+      background: rgba(255, 250, 252, 0.88);
+      color: var(--ink);
+      font: 1rem Arial, sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    select:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 4px rgba(246, 91, 139, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 26px;
+      border: 0;
+      border-radius: 14px;
+      padding: 17px 20px;
+      cursor: pointer;
+      background: var(--pink);
+      box-shadow: 0 12px 25px rgba(216, 63, 112, 0.2);
+      color: var(--white);
+      font: 700 0.92rem Arial, sans-serif;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .button:hover {
+      background: var(--deep-pink);
+      box-shadow: 0 16px 30px rgba(216, 63, 112, 0.27);
+      transform: translateY(-2px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .plan {
+      margin-top: 34px;
+      border-radius: 18px;
+      padding: 21px;
+      background: var(--rose);
+      text-align: center;
+    }
+
+    .plan-label {
+      margin: 0 0 9px;
+      color: var(--muted);
+      font: 700 0.72rem Arial, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .plan-detail {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1.35;
+    }
+
+    .plan-detail span {
+      color: var(--deep-pink);
+    }
+
+    .letter {
+      margin: 20px 0 0;
+      border-top: 1px solid rgba(216, 63, 112, 0.18);
+      padding-top: 20px;
+      color: var(--ink);
+      font-size: 0.98rem;
+      line-height: 1.8;
+      text-align: left;
+      white-space: pre-line;
+    }
+
+    .letter-button {
+      display: block;
+      margin: 22px auto 0;
+      border: 1px solid #f3abc4;
+      border-radius: 999px;
+      padding: 12px 19px;
+      cursor: pointer;
+      background: #fff7fa;
+      color: var(--deep-pink);
+      font: 700 0.78rem Arial, sans-serif;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .letter-button:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .message {
+      min-height: 22px;
+      margin: 14px 0 0;
+      color: var(--deep-pink);
+      font: 700 0.78rem Arial, sans-serif;
+      text-align: center;
+    }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 18px auto 0;
+    }
+
+    .music-button {
+      border: 1px solid #f3abc4;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      background: #fff7fa;
+      color: var(--deep-pink);
+      font: 700 0.72rem Arial, sans-serif;
+      letter-spacing: 0.04em;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .music-button:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .music-label {
+      color: var(--muted);
+      font: 0.7rem Arial, sans-serif;
+    }
+
+    .extras {
+      width: min(1050px, 100%);
+      margin-top: 24px;
+    }
+
+    .extra-card {
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 22px;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .extra-title {
+      margin: 0;
+      color: var(--deep-pink);
+      font-size: 1.8rem;
+      font-weight: 400;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .count-box {
+      min-width: 70px;
+      border-radius: 14px;
+      padding: 12px 8px;
+      background: var(--rose);
+    }
+
+    .count-number {
+      display: block;
+      color: var(--deep-pink);
+      font: 700 1.5rem Arial, sans-serif;
+    }
+
+    .count-label {
+      color: var(--muted);
+      font: 0.62rem Arial, sans-serif;
+    }
+
+    .extras-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .memory {
+      min-height: 150px;
+      border-radius: 18px;
+      padding: 20px;
+      background: linear-gradient(145deg, #fff, #ffe1ec);
+      text-align: left;
+      transition: transform 0.25s;
+    }
+
+    .memory:hover { transform: translateY(-5px) rotate(-1deg); }
+    .memory-icon { color: var(--pink); font-size: 2rem; }
+    .memory h3 { margin: 12px 0 6px; font-size: 1.1rem; font-weight: 400; }
+    .memory p { margin: 0; color: var(--muted); font: 0.78rem/1.5 Arial, sans-serif; }
+
+    .surprise-button {
+      margin-top: 20px;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 22px;
+      cursor: pointer;
+      background: var(--pink);
+      color: white;
+      font: 700 0.78rem Arial, sans-serif;
+    }
+
+    .surprise-message {
+      min-height: 22px;
+      margin: 13px 0 0;
+      color: var(--deep-pink);
+      font: 700 0.78rem Arial, sans-serif;
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 18px 12px; }
+      .planner { grid-template-columns: 1fr; border-radius: 24px; }
+      .intro { min-height: 420px; padding: 42px 32px; }
+      .intro h1 {
+        max-width: 100%;
+        font-size: clamp(2.5rem, 12vw, 4rem);
+        overflow-wrap: break-word;
+      }
+      .intro-copy { max-width: 100%; }
+      .love-note { margin-top: 35px; }
+      .form-side { padding: 38px 28px 32px; }
+      .extras { margin-top: 18px; }
+      .extras-grid { grid-template-columns: 1fr; }
+      .countdown { gap: 6px; }
+      .count-box { min-width: 62px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-hearts" aria-hidden="true">
+    <span class="heart" style="--size: 18px; --duration: 11s; --delay: 0s; left: 8%;">♥</span>
+    <span class="heart" style="--size: 26px; --duration: 14s; --delay: 4s; left: 23%;">♥</span>
+    <span class="heart" style="--size: 15px; --duration: 12s; --delay: 2s; left: 48%;">♥</span>
+    <span class="heart" style="--size: 22px; --duration: 15s; --delay: 7s; left: 71%;">♥</span>
+    <span class="heart" style="--size: 16px; --duration: 10s; --delay: 5s; left: 91%;">♥</span>
+  </div>
+
+  <main class="page">
+    <section class="planner" aria-label="Date planner">
+      <div class="intro">
+        <p class="eyebrow">A little surprise <span>♥</span></p>
+        <h1>Let’s make a date to <span class="remember">remember.</span></h1>
+        <p class="intro-copy">
+          Pick a day, choose a place, and turn an ordinary moment into our next favorite memory.
+        </p>
+        <div class="love-note">
+          <span class="mini-heart">♥</span>
+          <span>Made with love, just for you.</span>
+        </div>
+      </div>
+
+      <div class="form-side">
+        <h2 class="form-heading">Our next adventure</h2>
+        <p class="form-subtitle">Tell me when and where you would like our special date to be.</p>
+
+        <form id="date-form" class="fields">
+          <div>
+            <label for="date">Date</label>
+            <input id="date" name="date" type="text" value="16 November 2026" readonly aria-readonly="true" />
+          </div>
+          <div>
+            <label for="place">Place</label>
+            <select id="place" name="place" required>
+              <option value="Eat something in Koh Pich">Eat something in Koh Pich</option>
+              <option value="Eat something in Koh Norea">Eat something in Koh Norea</option>
+              <option value="Find something to eat while we are driving">Find something to eat while we are driving</option>
+            </select>
+          </div>
+          <button class="button" type="submit">Save our date <span aria-hidden="true">♥</span></button>
+        </form>
+
+        <div class="plan" aria-live="polite">
+          <p class="plan-label">Our date is waiting for us</p>
+          <p id="plan-detail" class="plan-detail">Choose a date and place above <span>♥</span></p>
+          <a class="letter-button" href="letter.html">Open your love letter ♥</a>
+        </div>
+        <p id="message" class="message" role="status"></p>
+        <div class="music-player">
+          <button id="music-button" class="music-button" type="button">PLAY OUR SONG ♫</button>
+          <span class="music-label">SAY YOU WON'T LET GO</span>
+        </div>
+      </div>
+    </section>
+    <section class="extras" aria-label="Little date surprises">
+      <div class="extra-card">
+        <h2 class="extra-title">COUNTING DOWN TO US ♥</h2>
+        <div class="countdown" aria-live="polite">
+          <div class="count-box"><span id="days" class="count-number">0</span><span class="count-label">DAYS</span></div>
+          <div class="count-box"><span id="hours" class="count-number">0</span><span class="count-label">HOURS</span></div>
+          <div class="count-box"><span id="minutes" class="count-number">0</span><span class="count-label">MINUTES</span></div>
+          <div class="count-box"><span id="seconds" class="count-number">0</span><span class="count-label">SECONDS</span></div>
+        </div>
+      </div>
+      <div class="extras-grid">
+        <article class="memory"><div class="memory-icon">♥</div><h3>OUR FIRST MEMORY</h3><p>A LITTLE SPACE FOR A PHOTO OF US.</p></article>
+        <article class="memory"><div class="memory-icon">✿</div><h3>OUR FAVORITE MOMENT</h3><p>EVERY DAY WITH YOU FEELS SPECIAL.</p></article>
+        <article class="memory"><div class="memory-icon">★</div><h3>OUR NEXT MEMORY</h3><p>COMING SOON ON 16 NOVEMBER 2026.</p></article>
+      </div>
+      <div class="extra-card">
+        <button id="surprise-button" class="surprise-button" type="button">OPEN A SECRET SURPRISE ♥</button>
+        <p id="surprise-message" class="surprise-message" role="status"></p>
+      </div>
+    </section>
+  </main>
+  <audio id="background-music" src="song-clip.mp3" autoplay loop preload="auto"></audio>
+
+  <script>
+    const form = document.querySelector("#date-form");
+    const dateInput = document.querySelector("#date");
+    const placeInput = document.querySelector("#place");
+    const planDetail = document.querySelector("#plan-detail");
+    const message = document.querySelector("#message");
+    const defaultDate = "2026-11-16";
+    const music = document.querySelector("#background-music");
+    const musicButton = document.querySelector("#music-button");
+    const savedMusicState = JSON.parse(sessionStorage.getItem("date-song-state") || "null");
+    const surpriseButton = document.querySelector("#surprise-button");
+    const surpriseMessage = document.querySelector("#surprise-message");
+    const targetDate = new Date("2026-11-16T00:00:00");
+
+    const savedPlan = JSON.parse(localStorage.getItem("our-date-plan") || "null");
+
+    function formatDate(value) {
+      return new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }).format(new Date(`${value}T00:00:00`));
+    }
+
+    function showPlan(date, place) {
+      planDetail.innerHTML = `${formatDate(date)}<br><span>at ${place} ♥</span>`;
+    }
+
+    if (savedPlan && savedPlan.date === defaultDate && savedPlan.place) {
+      placeInput.value = savedPlan.place;
+      showPlan(savedPlan.date, savedPlan.place);
+    } else {
+      showPlan(defaultDate, placeInput.value);
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const date = defaultDate;
+      const place = placeInput.value.trim();
+
+      if (!date || !place) return;
+
+      localStorage.setItem("our-date-plan", JSON.stringify({ date, place }));
+      showPlan(date, place);
+      message.textContent = "Yay! It’s a date. I can’t wait ♥";
+      setTimeout(() => { message.textContent = ""; }, 4200);
+    });
+
+    function updateMusicButton() {
+      musicButton.textContent = music.paused ? "PLAY OUR SONG ♫" : "PAUSE OUR SONG ▮▮";
+    }
+
+    function restoreMusicState() {
+      if (!savedMusicState) return;
+      if (Number.isFinite(savedMusicState.time)) {
+        music.currentTime = Math.min(savedMusicState.time, music.duration || savedMusicState.time);
+      }
+      if (savedMusicState.playing) {
+        music.play().then(updateMusicButton).catch(updateMusicButton);
+      }
+    }
+
+    function saveMusicState() {
+      sessionStorage.setItem("date-song-state", JSON.stringify({
+        time: music.currentTime,
+        playing: !music.paused
+      }));
+    }
+
+    musicButton.addEventListener("click", () => {
+      if (music.paused) music.play();
+      else music.pause();
+      updateMusicButton();
+      saveMusicState();
+    });
+
+    document.addEventListener("click", () => {
+      if (music.paused) music.play().then(updateMusicButton).catch(() => {});
+    }, { once: true });
+
+    music.addEventListener("loadedmetadata", restoreMusicState, { once: true });
+    document.addEventListener("visibilitychange", saveMusicState);
+    window.addEventListener("pagehide", saveMusicState);
+    updateMusicButton();
+
+    function updateCountdown() {
+      const remaining = Math.max(0, targetDate - new Date());
+      const totalSeconds = Math.floor(remaining / 1000);
+      document.querySelector("#days").textContent = Math.floor(totalSeconds / 86400);
+      document.querySelector("#hours").textContent = Math.floor((totalSeconds % 86400) / 3600);
+      document.querySelector("#minutes").textContent = Math.floor((totalSeconds % 3600) / 60);
+      document.querySelector("#seconds").textContent = totalSeconds % 60;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    surpriseButton.addEventListener("click", () => {
+      surpriseMessage.textContent = "SURPRISE! YOU ARE MY FAVORITE PERSON IN THE WHOLE WORLD ♥";
+      surpriseButton.textContent = "SECRET UNLOCKED ♥";
+    });
+
+  </script>
+</body>
+</html>

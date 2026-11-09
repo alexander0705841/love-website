@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Letter For You</title>
+  <style>
+    :root {
+      --ink: #5f233b;
+      --muted: #9c5d72;
+      --pink: #f65b8b;
+      --deep-pink: #d83f70;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #fff5f9, #ffdce9, #fff8f8);
+      color: var(--ink);
+      text-transform: uppercase;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .hearts { position: fixed; inset: 0; pointer-events: none; }
+    .heart {
+      position: absolute;
+      bottom: -30px;
+      color: rgba(236, 77, 128, 0.45);
+      font: var(--size) Arial, sans-serif;
+      animation: rise var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes rise {
+      0% { opacity: 0; transform: translateY(0) rotate(0); }
+      15% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-110vh) rotate(25deg); }
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 35px 18px;
+    }
+
+    .letter-card {
+      position: relative;
+      width: min(680px, 100%);
+      border: 2px solid #ffd1df;
+      border-radius: 30px;
+      padding: clamp(32px, 6vw, 58px);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), #fff0f5);
+      box-shadow: 0 25px 80px rgba(170, 52, 94, 0.22);
+      animation: arrive 0.9s cubic-bezier(0.2, 1.35, 0.4, 1) both;
+    }
+
+    @keyframes arrive {
+      0% { opacity: 0; transform: translateY(50px) scale(0.82) rotate(-4deg); }
+      65% { transform: translateY(-8px) scale(1.02) rotate(1deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+    }
+
+    .seal {
+      display: grid;
+      width: 66px;
+      height: 66px;
+      margin: -85px auto 20px;
+      place-items: center;
+      border: 7px solid #fff0f5;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 8px 20px rgba(216, 63, 112, 0.25);
+      color: white;
+      font: 1.7rem Arial, sans-serif;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      50% { transform: scale(1.1); }
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--deep-pink);
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      font-weight: 400;
+      letter-spacing: -0.06em;
+      text-align: center;
+    }
+
+    .subtitle {
+      margin: 9px 0 30px;
+      color: var(--muted);
+      font: 700 0.72rem Arial, sans-serif;
+      letter-spacing: 0.14em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .content {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.9;
+      white-space: pre-line;
+    }
+
+    .question {
+      margin: 34px 0 0;
+      border-top: 1px solid #f6c2d4;
+      padding-top: 28px;
+      color: var(--deep-pink);
+      font-size: clamp(1.35rem, 4vw, 1.9rem);
+      text-align: center;
+    }
+
+    .answers {
+      display: flex;
+      justify-content: center;
+      gap: 13px;
+      margin-top: 18px;
+    }
+
+    .answer {
+      min-width: 105px;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font: 700 0.8rem Arial, sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .answer:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(216, 63, 112, 0.2);
+    }
+
+    .yes {
+      background: var(--pink);
+      color: white;
+    }
+
+    .no {
+      border: 1px solid #f1b3c9;
+      background: #fff;
+      color: var(--deep-pink);
+    }
+
+    .answer-message {
+      min-height: 25px;
+      margin: 17px 0 0;
+      color: var(--deep-pink);
+      font: 700 0.82rem Arial, sans-serif;
+      text-align: center;
+    }
+
+    .yes-celebrate {
+      animation: celebrate 0.7s ease both;
+    }
+
+    @keyframes celebrate {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.06) rotate(-2deg); }
+      70% { transform: scale(0.98) rotate(2deg); }
+      100% { transform: scale(1); }
+    }
+
+    .no-gentle {
+      animation: gentleNo 0.45s ease both;
+    }
+
+    .no-dodging {
+      position: fixed;
+      z-index: 3;
+      transition: left 0.28s ease, top 0.28s ease, transform 0.28s ease;
+    }
+
+    @keyframes gentleNo {
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .celebration-heart {
+      position: fixed;
+      z-index: 4;
+      color: var(--pink);
+      font: 1.6rem Arial, sans-serif;
+      pointer-events: none;
+      animation: burst 1.5s ease-out forwards;
+    }
+
+    .celebration {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(99, 27, 55, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      backdrop-filter: blur(7px);
+    }
+
+    .celebration.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .celebration-card {
+      position: relative;
+      width: min(390px, 100%);
+      border: 2px solid #ffd1df;
+      border-radius: 30px;
+      padding: 42px 25px 32px;
+      background: linear-gradient(145deg, #fffafb, #ffe9f1);
+      box-shadow: 0 25px 80px rgba(100, 25, 55, 0.3);
+      text-align: center;
+      transform: translateY(28px) scale(0.75) rotate(-5deg);
+      transition: transform 0.55s cubic-bezier(0.2, 1.35, 0.4, 1);
+    }
+
+    .celebration.is-visible .celebration-card {
+      transform: translateY(0) scale(1) rotate(0);
+    }
+
+    .celebration-icon {
+      display: grid;
+      width: 82px;
+      height: 82px;
+      margin: -76px auto 16px;
+      place-items: center;
+      border: 8px solid #fff0f5;
+      border-radius: 50%;
+      background: var(--pink);
+      color: white;
+      font: 2.2rem Arial, sans-serif;
+      box-shadow: 0 10px 24px rgba(216, 63, 112, 0.28);
+      animation: celebrationPulse 1s ease-in-out infinite alternate;
+    }
+
+    @keyframes celebrationPulse {
+      from { transform: scale(1) rotate(-7deg); }
+      to { transform: scale(1.13) rotate(7deg); }
+    }
+
+    .celebration-title {
+      margin: 0;
+      color: var(--deep-pink);
+      font-size: 2.6rem;
+      font-weight: 400;
+    }
+
+    .celebration-copy {
+      margin: 12px 0 0;
+      color: var(--ink);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .celebration-close {
+      display: block;
+      width: min(100%, 270px);
+      margin-top: 23px;
+      margin-right: auto;
+      margin-left: auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 21px;
+      cursor: pointer;
+      background: var(--pink);
+      color: white;
+      font: 700 0.78rem Arial, sans-serif;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .celebration-card a.celebration-close {
+      margin-top: 30px;
+    }
+
+    @keyframes burst {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+      100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.3) rotate(25deg); }
+    }
+
+    .back {
+      display: block;
+      width: fit-content;
+      margin: 30px auto 0;
+      border-radius: 999px;
+      padding: 13px 22px;
+      background: var(--pink);
+      color: white;
+      font: 700 0.8rem Arial, sans-serif;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .back:hover { background: var(--deep-pink); transform: translateY(-2px); }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 18px auto 0;
+    }
+
+    .music-button {
+      border: 1px solid #f3abc4;
+      border-radius: 999px;
+      padding: 10px 16px;
+      cursor: pointer;
+      background: #fff7fa;
+      color: var(--deep-pink);
+      font: 700 0.72rem Arial, sans-serif;
+      letter-spacing: 0.04em;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .music-button:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .music-label {
+      color: var(--muted);
+      font: 0.7rem Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true">
+    <span class="heart" style="--size: 18px; --duration: 11s; --delay: 0s; left: 8%;">♥</span>
+    <span class="heart" style="--size: 26px; --duration: 14s; --delay: 4s; left: 23%;">♥</span>
+    <span class="heart" style="--size: 15px; --duration: 12s; --delay: 2s; left: 48%;">♥</span>
+    <span class="heart" style="--size: 22px; --duration: 15s; --delay: 7s; left: 71%;">♥</span>
+    <span class="heart" style="--size: 16px; --duration: 10s; --delay: 5s; left: 91%;">♥</span>
+  </div>
+  <main class="page">
+    <article class="letter-card">
+      <div class="seal">♥</div>
+      <h1>A letter for you</h1>
+      <p class="subtitle">Open when you need a little love</p>
+      <p class="content">DEAR O PHA B PIT JEA RKUN O KLANG NAS JOM PUS VOTMEAN O JOM PUS KDEY SL PIT PKOT BOS O DEL O BN PDOL OY B ORS PI JIT O DG OT TANG TEA PI PEL B SKOL O MK AVEY AVEY VEA PDO JREN NAS TANG JAREK BOS B PHEAP TOR SU BOS B PHEAP OT TMUT BOS B KR PDO JREN JEANG MUN DEA . O TEEANG TEA NIYEY THA KLUNG ENG MINH LAOR KROB 10 TEEA B MERL TV O KER O LAOR KLANG LAOR DOL TNAK B RK EY MK PREAB MINH BAN PEL KLAS B TE DEL KIT THA B MINH LAOR KROB 10 SOMRAB O PRUS O LAOR KLANG NAS. TANG PI PEL YG PDERM SL KNEA TBONG HA O DG OT KAL NG HA YG LEAK KE JREN NAS NA KLAC KE DG TEA O TE O NAK JOMNEAS O LENG KVOL O SOK JIT OY KE DG PI YG V RKUN O KLANG NAS HX O DG OT KAL PI PEL DEL O KIT JREN KAL NG MEAN PEL KLAS B YUM KH KLUNG ENG MX BN KHOM NORM O SBY JIT HX O NV KIT JREN TT OT KU NA JENG SOS . TEA TOR MK DOL NAGII MUK NIS YG NV MOU KNEA YANG MEAN KDEY SOK HX OSML O SU NAS SU TOR TAH BAN NV MOU KNEA JEA KU SS DOL SWEET MOU . HX LAST NIGHT B JG RKUN TV O JEA KLANG MDONG TT SOMRAB NUM CAKE CUTE BOS O SURPRISE B HX NG SONG DEL O SING OY B DEL JEA FIIRST TIME BOS B HX BN AROM JENG B SBY JIT KLANG DOL TNAK YUM YY LENG JENH B RKUN O NAS HX KR SL O NAS DEA OSML BOPHA &lt;3</p>
+      <p class="question">WILL YOU GO ON A DATE WITH ME?</p>
+      <div class="answers">
+        <button id="yes-button" class="answer yes" type="button">YES ♥</button>
+        <button id="no-button" class="answer no" type="button">NO</button>
+      </div>
+      <p id="answer-message" class="answer-message" role="status"></p>
+      <a class="back" href="index.html">Back to our date ♥</a>
+      <div class="music-player">
+        <button id="music-button" class="music-button" type="button">PLAY OUR SONG ♫</button>
+        <span class="music-label">SAY YOU WON'T LET GO</span>
+      </div>
+    </article>
+  </main>
+  <audio id="background-music" src="song-clip.mp3" autoplay loop preload="auto"></audio>
+  <div id="celebration" class="celebration" role="dialog" aria-modal="true" aria-labelledby="celebration-title">
+    <div class="celebration-card">
+      <div class="celebration-icon">♥</div>
+      <h2 id="celebration-title" class="celebration-title">YAY!</h2>
+      <p class="celebration-copy">YOU JUST MADE MY HEART SO HAPPY.<br>IT'S A DATE! ♥</p>
+      <button id="celebration-close" class="celebration-close" type="button">KEEP THIS LITTLE SECRET</button>
+      <a class="celebration-close" href="final.html">OPEN ONE LAST SURPRISE ♥</a>
+    </div>
+  </div>
+  <script>
+    const yesButton = document.querySelector("#yes-button");
+    const noButton = document.querySelector("#no-button");
+    const answerMessage = document.querySelector("#answer-message");
+    const letterCard = document.querySelector(".letter-card");
+    const celebration = document.querySelector("#celebration");
+    const celebrationClose = document.querySelector("#celebration-close");
+    const music = document.querySelector("#background-music");
+    const musicButton = document.querySelector("#music-button");
+    const savedMusicState = JSON.parse(sessionStorage.getItem("date-song-state") || "null");
+
+    yesButton.addEventListener("click", () => {
+      answerMessage.textContent = "YAY! I AM SO HAPPY. IT'S A DATE! ♥";
+      celebration.classList.add("is-visible");
+      celebrationClose.focus();
+      letterCard.classList.remove("yes-celebrate");
+      void letterCard.offsetWidth;
+      letterCard.classList.add("yes-celebrate");
+
+      for (let index = 0; index < 28; index += 1) {
+        const heart = document.createElement("span");
+        heart.className = "celebration-heart";
+        heart.textContent = index % 3 === 0 ? "✦" : "♥";
+        heart.style.left = "50%";
+        heart.style.top = "52%";
+        heart.style.setProperty("--x", `${Math.round(Math.random() * 260 - 130)}px`);
+        heart.style.setProperty("--y", `${Math.round(Math.random() * -260 - 30)}px`);
+        document.body.appendChild(heart);
+        heart.addEventListener("animationend", () => heart.remove());
+      }
+    });
+
+    noButton.addEventListener("click", () => {
+      dodgeNoButton();
+    });
+
+    function dodgeNoButton() {
+      noButton.classList.add("no-dodging");
+      const padding = 18;
+      const maxLeft = Math.max(padding, window.innerWidth - noButton.offsetWidth - padding);
+      const maxTop = Math.max(padding, window.innerHeight - noButton.offsetHeight - padding);
+      noButton.style.left = `${Math.round(padding + Math.random() * (maxLeft - padding))}px`;
+      noButton.style.top = `${Math.round(padding + Math.random() * (maxTop - padding))}px`;
+      noButton.classList.remove("no-gentle");
+      void noButton.offsetWidth;
+      noButton.classList.add("no-gentle");
+      answerMessage.textContent = "HEHE, TRY THE OTHER BUTTON ♥";
+    }
+
+    noButton.addEventListener("pointerenter", dodgeNoButton);
+
+    function updateMusicButton() {
+      musicButton.textContent = music.paused ? "PLAY OUR SONG ♫" : "PAUSE OUR SONG ▮▮";
+    }
+
+    function restoreMusicState() {
+      if (!savedMusicState) return;
+      if (Number.isFinite(savedMusicState.time)) {
+        music.currentTime = Math.min(savedMusicState.time, music.duration || savedMusicState.time);
+      }
+      if (savedMusicState.playing) {
+        music.play().then(updateMusicButton).catch(updateMusicButton);
+      }
+    }
+
+    function saveMusicState() {
+      sessionStorage.setItem("date-song-state", JSON.stringify({
+        time: music.currentTime,
+        playing: !music.paused
+      }));
+    }
+
+    musicButton.addEventListener("click", () => {
+      if (music.paused) music.play();
+      else music.pause();
+      updateMusicButton();
+      saveMusicState();
+    });
+
+    document.addEventListener("click", () => {
+      if (music.paused) music.play().then(updateMusicButton).catch(() => {});
+    }, { once: true });
+
+    music.addEventListener("loadedmetadata", restoreMusicState, { once: true });
+    document.addEventListener("visibilitychange", saveMusicState);
+    window.addEventListener("pagehide", saveMusicState);
+    updateMusicButton();
+
+    function closeCelebration() {
+      celebration.classList.remove("is-visible");
+    }
+
+    celebrationClose.addEventListener("click", closeCelebration);
+    celebration.addEventListener("click", (event) => {
+      if (event.target === celebration) closeCelebration();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeCelebration();
+    });
+  </script>
+</body>
+</html>
